@@ -332,22 +332,22 @@ option(CMAKE_USE_BEARSSL "Enable BearSSL for SSL/TLS" OFF)
 option(CMAKE_USE_NSS "Enable NSS for SSL/TLS" OFF)
 option(CMAKE_USE_WOLFSSL "enable wolfSSL for SSL/TLS" OFF)
 
-set(openssl_default ON)
+set(openssl_default OFF)
 if(WIN32 OR CMAKE_USE_SECTRANSP OR CMAKE_USE_SCHANNEL OR CMAKE_USE_MBEDTLS OR CMAKE_USE_NSS OR CMAKE_USE_WOLFSSL)
   set(openssl_default OFF)
 endif()
 option(CMAKE_USE_OPENSSL "Use OpenSSL code. Experimental" ${openssl_default})
 option(CURL_DISABLE_OPENSSL_AUTO_LOAD_CONFIG "Disable automatic loading of OpenSSL configuration" OFF)
 
-count_true(enabled_ssl_options_count
-  CMAKE_USE_SCHANNEL
-  CMAKE_USE_SECTRANSP
-  CMAKE_USE_OPENSSL
-  CMAKE_USE_MBEDTLS
-  CMAKE_USE_BEARSSL
-  CMAKE_USE_NSS
-  CMAKE_USE_WOLFSSL
-)
+#count_true(enabled_ssl_options_count
+#  CMAKE_USE_SCHANNEL
+#  CMAKE_USE_SECTRANSP
+#  CMAKE_USE_OPENSSL
+#  CMAKE_USE_MBEDTLS
+#  CMAKE_USE_BEARSSL
+#  CMAKE_USE_NSS
+#  CMAKE_USE_WOLFSSL
+#)
 if(enabled_ssl_options_count GREATER "1")
   set(CURL_WITH_MULTI_SSL ON)
 endif()
@@ -383,33 +383,33 @@ if(CMAKE_USE_SECTRANSP)
   list(APPEND CURL_LIBS "${COREFOUNDATION_FRAMEWORK}" "${SECURITY_FRAMEWORK}")
 endif()
 
-if(CMAKE_USE_OPENSSL)
-  find_package(OpenSSL REQUIRED)
-  set(SSL_ENABLED ON)
-  set(USE_OPENSSL ON)
-
-  # Depend on OpenSSL via imported targets if supported by the running
-  # version of CMake.  This allows our dependents to get our dependencies
-  # transitively.
-  if(NOT CMAKE_VERSION VERSION_LESS 3.4)
-    list(APPEND CURL_LIBS OpenSSL::SSL OpenSSL::Crypto)
-  else()
-    list(APPEND CURL_LIBS ${OPENSSL_LIBRARIES})
-    include_directories(${OPENSSL_INCLUDE_DIR})
-  endif()
-
-  set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIR})
-  check_include_file("openssl/crypto.h" HAVE_OPENSSL_CRYPTO_H)
-  check_include_file("openssl/err.h"    HAVE_OPENSSL_ERR_H)
-  check_include_file("openssl/pem.h"    HAVE_OPENSSL_PEM_H)
-  check_include_file("openssl/rsa.h"    HAVE_OPENSSL_RSA_H)
-  check_include_file("openssl/ssl.h"    HAVE_OPENSSL_SSL_H)
-  check_include_file("openssl/x509.h"   HAVE_OPENSSL_X509_H)
-  check_include_file("openssl/rand.h"   HAVE_OPENSSL_RAND_H)
-  check_symbol_exists(RAND_status "${CURL_INCLUDES}" HAVE_RAND_STATUS)
-  check_symbol_exists(RAND_screen "${CURL_INCLUDES}" HAVE_RAND_SCREEN)
-  check_symbol_exists(RAND_egd    "${CURL_INCLUDES}" HAVE_RAND_EGD)
-endif()
+#if(CMAKE_USE_OPENSSL)
+#  find_package(OpenSSL REQUIRED)
+#  set(SSL_ENABLED ON)
+#  set(USE_OPENSSL ON)
+#
+#  # Depend on OpenSSL via imported targets if supported by the running
+#  # version of CMake.  This allows our dependents to get our dependencies
+#  # transitively.
+#  if(NOT CMAKE_VERSION VERSION_LESS 3.4)
+#    list(APPEND CURL_LIBS OpenSSL::SSL OpenSSL::Crypto)
+#  else()
+#    list(APPEND CURL_LIBS ${OPENSSL_LIBRARIES})
+#    include_directories(${OPENSSL_INCLUDE_DIR})
+#  endif()
+#
+#  set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIR})
+#  check_include_file("openssl/crypto.h" HAVE_OPENSSL_CRYPTO_H)
+#  check_include_file("openssl/err.h"    HAVE_OPENSSL_ERR_H)
+#  check_include_file("openssl/pem.h"    HAVE_OPENSSL_PEM_H)
+#  check_include_file("openssl/rsa.h"    HAVE_OPENSSL_RSA_H)
+#  check_include_file("openssl/ssl.h"    HAVE_OPENSSL_SSL_H)
+#  check_include_file("openssl/x509.h"   HAVE_OPENSSL_X509_H)
+#  check_include_file("openssl/rand.h"   HAVE_OPENSSL_RAND_H)
+#  check_symbol_exists(RAND_status "${CURL_INCLUDES}" HAVE_RAND_STATUS)
+#  check_symbol_exists(RAND_screen "${CURL_INCLUDES}" HAVE_RAND_SCREEN)
+#  check_symbol_exists(RAND_egd    "${CURL_INCLUDES}" HAVE_RAND_EGD)
+#endif()
 
 if(CMAKE_USE_MBEDTLS)
   find_package(MbedTLS REQUIRED)
